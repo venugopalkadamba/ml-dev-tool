@@ -122,9 +122,3 @@ ml-dev-tool/
 ├─ requirements.txt
 └─ README.md
 ```
-
-## Citing
-If you use this tool in academic work, please cite the repository and include a link in your artifact evaluation instructions. A formal citation entry will be provided in a future release.
-
-## License
-This project is licensed under the terms of the LICENSE file in the repository.
