@@ -78,7 +78,8 @@ class FeatureEncoder:
             self.encoder = LabelEncoder()
             self.encoder.fit(X[self.column])
         elif self.method == 'onehot':
-            self.encoder = OneHotEncoder(sparse=False, drop=self.args.get('drop', None))
+            # Construct without sparse flags for broad compatibility across sklearn versions
+            self.encoder = OneHotEncoder(drop=self.args.get('drop', None))
             self.encoder.fit(X[[self.column]])
         else:
             raise ValueError("Unsupported encoding method. Choose 'label' or 'onehot'.")
@@ -95,6 +96,17 @@ class FeatureEncoder:
             if not self.encoder:
                 raise ValueError("Encoder is not fitted. Call fit() first.")
             encoded_cols = self.encoder.transform(data_cp[[self.column]])
+            # Convert sparse matrix to dense array if needed for DataFrame construction
+            try:
+                import scipy.sparse as sp
+                if sp.issparse(encoded_cols):
+                    encoded_cols = encoded_cols.toarray()
+            except Exception:
+                # If scipy isn't available or any issue occurs, attempt numpy array conversion
+                try:
+                    encoded_cols = encoded_cols.toarray()
+                except Exception:
+                    pass
             col_names = self.encoder.get_feature_names_out([self.column])
             encoded_df = pd.DataFrame(encoded_cols, columns=col_names, index=data_cp.index)
             data_cp = data_cp.drop(columns=[self.column]).join(encoded_df)

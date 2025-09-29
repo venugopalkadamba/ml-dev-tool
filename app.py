@@ -44,6 +44,17 @@ except Exception:
 
 # Define page title and layout
 st.set_page_config(page_title="Bias Analysis Pipeline Builder", layout="wide")
+st.markdown(
+    """
+    <style>
+    /* Force light theme look for our cards irrespective of user agent preference */
+    .step-card { background:#FFFFFF !important; }
+    .step-title { color:#111827 !important; }
+    .step-meta { color:#374151 !important; opacity:0.80 !important; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Title and description
 st.title("Interactive Bias Analysis Pipeline Builder")
@@ -91,6 +102,10 @@ if 'stacking_final' not in st.session_state:
     st.session_state.stacking_final = None
 if 'steps_version' not in st.session_state:
     st.session_state.steps_version = 0
+
+# Initialize app_mode to avoid widget default conflict
+if 'app_mode' not in st.session_state:
+    st.session_state.app_mode = "Data Generation"
 
 # Apply any pending navigation before widgets are created
 if 'pending_app_mode' in st.session_state:
@@ -802,19 +817,21 @@ def configure_pipeline():
                     """
                     <style>
                     .step-card {border:1px solid rgba(128,128,128,0.20);border-radius:8px;padding:12px 14px;margin-bottom:10px;background:var(--secondary-background-color, var(--background-color));box-shadow:0 1px 2px rgba(0,0,0,0.04);} 
-                    .step-title {font-weight:600;margin-bottom:4px;color:var(--text-color, #31333F);} 
-                    .step-meta {font-size:13px;color:var(--text-color, #31333F);opacity:0.75;}
+                    /* Default to light theme-friendly colors */
+                    .step-title {font-weight:600;margin-bottom:4px;color:#111827;} /* gray-900 */
+                    .step-meta {font-size:13px;color:#374151;opacity:0.80;} /* gray-700 */
                     .badge {display:inline-block;background:var(--primary-color, #4C78FF);color:#ffffff;border-radius:6px;padding:2px 8px;margin-right:8px;font-size:12px;}
 
+                    /* Prefer explicit overrides to avoid inheriting Streamlit theme vars */
                     @media (prefers-color-scheme: dark) {
                       .step-card {border-color: rgba(255,255,255,0.18); box-shadow: 0 1px 2px rgba(0,0,0,0.2);} 
-                      .step-title {color: var(--text-color, #FAFAFA);} 
-                      .step-meta {color: var(--text-color, #FAFAFA); opacity: 0.85;}
+                      .step-title {color:#F9FAFB;} /* near-white */
+                      .step-meta {color:#E5E7EB; opacity:0.90;} /* gray-200 */
                     }
                     @media (prefers-color-scheme: light) {
                       .step-card {border-color: rgba(0,0,0,0.08);} 
-                      .step-title {color: var(--text-color, #31333F);} 
-                      .step-meta {color: var(--text-color, #31333F); opacity: 0.70;}
+                      .step-title {color:#111827;} /* gray-900 */
+                      .step-meta {color:#374151; opacity:0.80;} /* gray-700 */
                     }
                     </style>
                     """,
@@ -1416,7 +1433,7 @@ def sidebar_progress():
         for k in keys:
             del st.session_state[k]
         st.rerun()
-    app_mode = st.sidebar.radio("Choose the app mode", ["Data Generation", "Pipeline Configuration", "Results Visualization", "Pipeline Comparison"], key='app_mode', index=0 if 'app_mode' not in st.session_state else ["Data Generation", "Pipeline Configuration", "Results Visualization", "Pipeline Comparison"].index(st.session_state.get('app_mode', "Data Generation")))
+    app_mode = st.sidebar.radio("Choose the app mode", ["Data Generation", "Pipeline Configuration", "Results Visualization", "Pipeline Comparison"], key='app_mode')
     return app_mode
 
 app_mode = sidebar_progress()
