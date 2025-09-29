@@ -1374,7 +1374,12 @@ def compare_pipelines():
     st.subheader("Side-by-side Pipeline Details")
     max_cols = len(st.session_state.saved_pipelines)
     if max_cols > 0:
-        cols_count = st.slider("Number of columns", 1, max_cols, min(3, max_cols), key="compare_cols")
+        # Avoid rendering a slider with equal min/max which can cause a RangeError in the frontend
+        if max_cols > 1:
+            cols_count = st.slider("Number of columns", 1, max_cols, min(3, max_cols), key="compare_cols")
+        else:
+            cols_count = 1
+            st.info("Only one pipeline saved. Showing a single column.")
         selected_names = st.multiselect(
             "Pipelines to display side-by-side",
             options=names,
