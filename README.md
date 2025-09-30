@@ -1,5 +1,7 @@
 # A No-code Bias-aware Machine Learning Pipeline Generation Platform for Algorithmic Fairness Research
 
+🎥 [Demo Video](https://www.youtube.com/watch?v=dy3w-l2JtS0)
+
 A lightweight, reproducible workbench for fairness-focused ML experiments. It combines a Streamlit UI with a transparent Python core to generate datasets (synthetic or benchmark), inject controlled biases, preprocess data, train models, and evaluate performance and fairness metrics. Ideal for rapid ideation, classroom demos, and artifact-ready experiments.
 
 ---
